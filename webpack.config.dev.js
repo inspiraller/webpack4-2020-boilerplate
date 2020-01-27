@@ -1,10 +1,11 @@
 const webpack = require('webpack');
 const path = require('path');
 const autoprefixer = require('autoprefixer');
-const StyleLintPlugin = require('stylelint-webpack-plugin');
-const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const Express = require('express');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ProgressBarPlugin = require('progress-bar-webpack-plugin');
+const StyleLintPlugin = require('stylelint-webpack-plugin');
+
 // const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 
 const src = path.join(__dirname, '/src');
@@ -74,7 +75,7 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env', '@babel/react'],
+            presets: [['@babel/preset-env', { modules: false }], '@babel/react'],
             plugins: [
               '@babel/proposal-class-properties',
               '@babel/plugin-proposal-object-rest-spread',
@@ -125,7 +126,9 @@ module.exports = {
     new webpack.NamedModulesPlugin(),
     new webpack.HotModuleReplacementPlugin(),
     new HtmlWebpackPlugin({
-      template: indexHtml
+      template: indexHtml,
+      filename: './index.html',
+      inject: 'true'
     }),
     new webpack.LoaderOptionsPlugin({
       debug: true,
@@ -163,8 +166,7 @@ module.exports = {
     contentBase: dist,
     hot: true,
     port: 3000,
-    historyApiFallback: true,
-    open: true
+    historyApiFallback: true
     // hot: true,
     // inline: true,
     // progress: true,
