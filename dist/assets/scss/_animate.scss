@@ -1,0 +1,4 @@
+@mixin animatePath {
+  position: relative;
+  @include circle;
+}

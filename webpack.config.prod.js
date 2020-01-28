@@ -1,13 +1,15 @@
 const webpack = require('webpack');
 const path = require('path');
 const autoprefixer = require('autoprefixer');
-const Express = require('express');
+const { argv } = require('yargs');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 
 // const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-
+const contextPath = '';
 const src = path.join(__dirname, '/src');
 const index = path.join(src, '/index.js');
 const assets = path.join(src, '/assets');
@@ -20,14 +22,15 @@ module.exports = {
   entry: {
     app: index
   },
-  mode: 'development',
+  mode: 'production',
   resolve: {
     modules: [src, 'node_modules'],
     extensions: ['.js', '.jsx', '.scss']
   },
   output: {
     path: dist,
-    filename: '[name].js',
+    filename: '[name].[hash].js',
+    sourceMapFilename: '[file].map',
     pathinfo: true,
     publicPath
   },
@@ -53,7 +56,7 @@ module.exports = {
     }
   },
   cache: true,
-  devtool: 'cheap-module-source-map',
+  devtool: 'source-map',
   // devtool: 'inline-eval-cheap-source-map' = optimize dev mode
   // devtool: 'cheap-module-source-map',
   stats: {
@@ -90,7 +93,7 @@ module.exports = {
         exclude: '/node_modules/',
         use: [
           {
-            loader: 'style-loader'
+            loader: MiniCssExtractPlugin.loader
           },
           {
             loader: 'css-loader?sourceMap'
@@ -147,32 +150,29 @@ module.exports = {
     //   filename: 'vendor.bundle.js',
     // }),
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify('development') // NEW
+      'process.env.NODE_ENV': JSON.stringify((argv.env && argv.env.NODE_ENV) || 'production')
+    }),
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify((argv.env && argv.env.prodEnv) || 'dummyurl')
+    }),
+    new webpack.DefinePlugin({
+      contextPath: JSON.stringify(contextPath)
     }),
     new StyleLintPlugin({
       context: 'src',
       syntax: 'scss'
-    })
+    }),
+    new MiniCssExtractPlugin({
+      filename: 'bundle.[hash].css'
+    }),
+    new CopyWebpackPlugin([
+      {
+        context: 'src/assets',
+        from: '**/*',
+        to: '../dist/assets'
+      }
+    ])
     // new OpenPlugin()
     // new webpack.HotModuleReplacementPlugin()
-  ],
-  devServer: {
-    before: app => {
-      app.get('/dude', (req, res) => {
-        res.json({ custom: 'response' });
-      });
-      app.use('/assets', Express.static(assets));
-    },
-    contentBase: dist,
-    hot: true,
-    port: 3000,
-    historyApiFallback: {
-      index: publicPath
-    }
-    // hot: true,
-    // inline: true,
-    // progress: true,
-    // stats: 'errors-only',
-    // host: process.env.HOST,
-  }
+  ]
 };

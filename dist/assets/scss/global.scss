@@ -1,0 +1,69 @@
+@import './var';
+* {
+  box-sizing: border-box;
+}
+html {
+  font-size: 67.5%;
+}
+
+body {
+  font-family: -apple-system, arial, sans-serif;
+  font-size: 12px;
+  font-size: 1.2rem;
+  font-weight: normal;
+}
+
+/* reset */
+body,
+form,
+div,
+span,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  padding: 0;
+}
+form {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  vertical-align: baseline;
+}
+
+fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+body:not(:-moz-handler-blocked) fieldset {
+  display: table-cell;
+}
+legend {
+  padding: 0;
+  float: left;
+  width: 100%;
+  display: none;
+}
+
+p {
+  margin: $margin6 0 0;
+  padding: 0;
+}
+
+dl,
+dt,
+dd {
+  margin: 0;
+  padding: 0;
+  text-indent: 0;
+  margin-inline-start: 0;
+}
+.sr-only {
+  display: none;
+}
